@@ -56,9 +56,10 @@ Import JSON is a manual way to move data between browsers/computers (it is **not
     "description": "Details",
     "releaseDate": "2026-09-22",
     "type": "New Feature",
-    "version": "2.4.0"
+    "version": "2.4.0",
+    "proofUrl": "https://example.com/reports"
   }]
 }
 ```
 
-`version` and `customTypes` are optional (files without `customTypes` from earlier versions still import). `type` is any non-empty name up to 40 characters; types used by updates but missing from `customTypes` are added automatically. IDs must be unique and each `productId` must match a product. Unknown fields, duplicates, bad dates or an unsupported `schemaVersion` reject the whole import with a list of errors.
+`version`, `proofUrl`, and `customTypes` are optional (files without `customTypes` from earlier versions still import). `proofUrl` must be an HTTP(S) URL up to 2048 characters. `type` is any non-empty name up to 40 characters; types used by updates but missing from `customTypes` are added automatically. IDs must be unique and each `productId` must match a product. Unknown fields, duplicates, bad dates or an unsupported `schemaVersion` reject the whole import with a list of errors.

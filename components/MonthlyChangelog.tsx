@@ -55,6 +55,11 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                       {u.version && <> · Version: {u.version}</>}
                     </p>
                     <p className="whitespace-pre-wrap break-words text-sm text-[#c9d1d9]">{u.description}</p>
+                    {u.proofUrl && (
+                      <a className="mt-2 inline-block text-sm text-[#58a6ff] hover:underline" href={u.proofUrl} target="_blank" rel="noopener noreferrer">
+                        View proof
+                      </a>
+                    )}
                     {renderActions && <div className="mt-3 flex gap-2">{renderActions(u)}</div>}
                   </li>
                 ))}

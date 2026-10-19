@@ -1,4 +1,5 @@
 import type { ChangelogUpdate, Dataset } from './types';
+import { isValidProofUrl } from './schema';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -112,7 +113,10 @@ export function renderChangelogHtml(ds: Dataset, opts: { title?: string; generat
             `Module: ${escapeHtml(u.moduleName)}`,
             ...(u.version ? [`Version: ${escapeHtml(u.version)}`] : []),
           ].join(' &middot; ');
-          return `<article class="card"><div class="row"><span>${escapeHtml(formatDayMonth(u.releaseDate))}</span><span class="badge" style="color:${color};border-color:${color}">${escapeHtml(u.type)}</span></div><h3>${escapeHtml(u.title)}</h3><p class="meta">${meta}</p><p>${escapeHtml(u.description)}</p></article>`;
+          const proof = u.proofUrl && isValidProofUrl(u.proofUrl)
+            ? `<p><a href="${escapeHtml(u.proofUrl)}" target="_blank" rel="noopener noreferrer">View proof</a></p>`
+            : '';
+          return `<article class="card"><div class="row"><span>${escapeHtml(formatDayMonth(u.releaseDate))}</span><span class="badge" style="color:${color};border-color:${color}">${escapeHtml(u.type)}</span></div><h3>${escapeHtml(u.title)}</h3><p class="meta">${meta}</p><p>${escapeHtml(u.description)}</p>${proof}</article>`;
         })
         .join('');
       return `<details><summary>${CHEVRON}${escapeHtml(m.label)}<span class="count">${m.updates.length} update${m.updates.length === 1 ? '' : 's'}</span></summary>${cards}</details>`;

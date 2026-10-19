@@ -82,6 +82,9 @@ export function UpdateForm({ products, types, onAddType, defaultProductId, editi
         <Field id="f-description" label="Description" required error={errors.description}>
           <textarea id="f-description" rows={4} className="field" value={input.description} onChange={(e) => set('description', e.target.value)} {...ad('description')} />
         </Field>
+        <Field id="f-proofUrl" label="Proof URL" error={errors.proofUrl}>
+          <input id="f-proofUrl" type="url" className="field" placeholder="https://example.com/inventory" value={input.proofUrl} onChange={(e) => set('proofUrl', e.target.value)} {...ad('proofUrl')} />
+        </Field>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field id="f-releaseDate" label="Release date" required error={errors.releaseDate}>
             <input id="f-releaseDate" type="date" className="field" value={input.releaseDate} onChange={(e) => set('releaseDate', e.target.value)} {...ad('releaseDate')} />

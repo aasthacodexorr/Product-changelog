@@ -74,6 +74,24 @@ t('custom type usable in create and edit; defaults preserved', () => {
   assert.equal(createUpdate(ds, { ...emptyInput('p_crm'), ...base, title: 'T', type: '' }).ok, false);
 });
 
+t('optional proof URL is validated, stored, edited, and preserved on import', () => {
+  const input = { ...emptyInput('p_crm'), ...base, title: 'Inventory update', type: 'Improvement', proofUrl: 'https://example.com/inventory' };
+  const created = createUpdate(seeded, input);
+  assert.ok(created.ok); if (!created.ok) return;
+  assert.equal(created.dataset.updates.at(-1)!.proofUrl, input.proofUrl);
+  const edited = editUpdate(created.dataset, created.id, { ...input, proofUrl: '' });
+  assert.ok(edited.ok); if (!edited.ok) return;
+  assert.equal(edited.dataset.updates.at(-1)!.proofUrl, undefined);
+  assert.equal(createUpdate(seeded, { ...input, proofUrl: 'javascript:alert(1)' }).ok, false);
+  const imported = parseImport(serializeExport(created.dataset));
+  assert.ok(imported.ok);
+  assert.equal(imported.value!.updates.at(-1)!.proofUrl, input.proofUrl);
+  assert.equal(validateDataset({
+    products: seeded.products,
+    updates: [{ ...seeded.updates[0], proofUrl: 'javascript:alert(1)' }],
+  }).ok, false);
+});
+
 t('validation requires fields; delete/addProduct', () => {
   const r = createUpdate(seeded, emptyInput());
   assert.equal(r.ok, false);
@@ -128,16 +146,20 @@ t('invalid input is rejected with errors', () => {
   assert.equal(parseImport(JSON.stringify({ ...ok, customTypes: [1] })).ok, false);
 });
 
-t('HTML: month-first, escapes user text, no scripts, shows product', () => {
+t('HTML: month-first, escapes user text, no scripts, shows product and proof link', () => {
   const withEvil = createUpdate(ds, { ...emptyInput('p_mobile'), moduleName: '<b>m</b>', title: '<script>alert(1)</script>', description: '"><img src=x onerror=alert(1)>', type: 'Bug Fix', releaseDate: '2026-10-30' });
   assert.ok(withEvil.ok); if (!withEvil.ok) return;
-  const custom = addCustomType(withEvil.dataset, '<i>x</i>').value!.dataset;
+  const withProof = createUpdate(withEvil.dataset, { ...emptyInput('p_mobile'), ...base, title: 'Inventory proof', type: 'Improvement', proofUrl: 'https://example.com/inventory' });
+  assert.ok(withProof.ok); if (!withProof.ok) return;
+  const custom = addCustomType(withProof.dataset, '<i>x</i>').value!.dataset;
   const html = renderChangelogHtml(custom);
   assert.ok(!html.includes('<script') && !html.includes('<img') && !html.includes('<i>'));
   assert.ok(html.includes('&lt;script&gt;'));
   assert.ok(html.indexOf('October 2026') < html.indexOf('September 2026'));
   assert.ok(html.includes('Product: Mobile App'));
   assert.ok(html.includes('15 October'));
+  assert.ok(html.includes('href="https://example.com/inventory"'));
+  assert.ok(html.includes('>View proof</a>'));
 });
 
 console.log(`\n${n} test groups passed`);

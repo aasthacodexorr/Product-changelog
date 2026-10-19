@@ -41,7 +41,7 @@ export interface MergePlan {
 }
 
 const UPDATE_FIELDS: (keyof ChangelogUpdate)[] = [
-  'productId', 'moduleName', 'title', 'description', 'releaseDate', 'type', 'version',
+  'productId', 'moduleName', 'title', 'description', 'releaseDate', 'type', 'version', 'proofUrl',
 ];
 
 /** Compares incoming data to the current working dataset without changing anything. */

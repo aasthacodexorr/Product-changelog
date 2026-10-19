@@ -26,6 +26,7 @@ export interface ChangelogUpdate {
   releaseDate: string;
   type: UpdateType;
   version?: string;
+  proofUrl?: string;
 }
 
 export interface Dataset {
@@ -50,6 +51,7 @@ export interface UpdateInput {
   releaseDate: string;
   type: UpdateType;
   version: string;
+  proofUrl: string;
 }
 
 export type FieldErrors = Partial<Record<keyof UpdateInput, string>>;
@@ -65,6 +67,7 @@ export const LIMITS = {
   title: 200,
   description: 5000,
   version: 40,
+  proofUrl: 2048,
   typeName: 40,
   customTypes: 100,
 } as const;

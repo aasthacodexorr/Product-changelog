@@ -20,9 +20,18 @@ export function isValidDateString(s: unknown): s is string {
   return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
 }
 
+export function isValidProofUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return (url.protocol === 'http:' || url.protocol === 'https:') && !!url.hostname;
+  } catch {
+    return false;
+  }
+}
+
 const PRODUCT_KEYS = ['id', 'name'];
 const UPDATE_KEYS = [
-  'id', 'productId', 'moduleName', 'title', 'description', 'releaseDate', 'type', 'version',
+  'id', 'productId', 'moduleName', 'title', 'description', 'releaseDate', 'type', 'version', 'proofUrl',
 ];
 
 function reqString(
@@ -96,6 +105,12 @@ export function validateDataset(raw: unknown): Result<Dataset> {
         errors.push(`${where}: "version" must be a string up to ${LIMITS.version} characters.`);
       } else version = u.version;
     }
+    let proofUrl: string | undefined;
+    if (u.proofUrl !== undefined && u.proofUrl !== null && u.proofUrl !== '') {
+      if (typeof u.proofUrl !== 'string' || u.proofUrl.length > LIMITS.proofUrl || !isValidProofUrl(u.proofUrl.trim())) {
+        errors.push(`${where}: "proofUrl" must be an HTTP(S) URL up to ${LIMITS.proofUrl} characters.`);
+      } else proofUrl = u.proofUrl.trim();
+    }
     if (
       id === undefined || productId === undefined || moduleName === undefined ||
       title === undefined || description === undefined ||
@@ -110,6 +125,7 @@ export function validateDataset(raw: unknown): Result<Dataset> {
       id, productId, moduleName, title, description, releaseDate, type: normalizeTypeName(type),
     };
     if (version) rec.version = version;
+    if (proofUrl) rec.proofUrl = proofUrl;
     updates.push(rec);
   });
 
