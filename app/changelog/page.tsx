@@ -60,9 +60,36 @@ export default function PublicChangelogPage() {
         <div className="flex items-center gap-2">
           <Link
             href="/panel"
-            className="rounded-md border border-[#30363d] px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:border-[#8b949e] hover:text-[#e6edf3]"
+            className="rounded-md flex justify-center items-center gap-1 border border-[#30363d] px-3 py-1.5 text-xs font-medium text-[#8b949e] hover:border-[#8b949e] hover:text-[#e6edf3]"
           >
-            Employee Panel &rarr;
+            Employee Panel <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 512 512">
+              <rect width="512" height="512" fill="none" />
+              <path
+                d="M224 144 H160
+       A80 80 0 0 0 80 224
+       V368
+       A80 80 0 0 0 160 448
+       H288
+       A80 80 0 0 0 368 368
+       V288"
+                fill="none"
+                stroke="#B8BBDD"
+                strokeWidth="32"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+
+              <path
+                d="M272 80 H432 V240
+       M432 80 L192 320"
+                fill="none"
+                stroke="#4655FF"
+                strokeWidth="32"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </Link>
         </div>
       </header>
