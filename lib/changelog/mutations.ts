@@ -59,20 +59,27 @@ export function inputFromUpdate(u: ChangelogUpdate): UpdateInput {
 
 export function validateUpdateInput(input: UpdateInput, products: Product[], types?: string[]): FieldErrors {
   const e: FieldErrors = {};
-  if (!input.productId || !products.some((p) => p.id === input.productId)) e.productId = 'Select a product.';
-  const req = (k: 'moduleName' | 'title' | 'description', label: string, max: number) => {
-    const v = input[k].trim();
-    if (!v) e[k] = `${label} is required.`;
-    else if (v.length > max) e[k] = `${label} must be ${max} characters or fewer.`;
-  };
-  req('moduleName', 'Module name', LIMITS.name);
-  req('title', 'Update title', LIMITS.title);
-  req('description', 'Description', LIMITS.description);
+  if (!input.productId || !products.some((p) => p.id === input.productId)) e.productId = 'Product is required.';
+  const title = input.title ? input.title.trim() : '';
+  if (!title) e.title = 'Update title is required.';
+  else if (title.length > LIMITS.title) e.title = `Title must be ${LIMITS.title} characters or fewer.`;
+
   if (!input.releaseDate) e.releaseDate = 'Release date is required.';
   else if (!isValidDateString(input.releaseDate)) e.releaseDate = 'Enter a valid date.';
-  if (!normalizeTypeName(input.type)) e.type = 'Select an update type.';
+
+  if (!input.type || !normalizeTypeName(input.type)) e.type = 'Update type is required.';
   else if (types && !canonicalType(input.type, types)) e.type = 'Unknown update type.';
-  if (input.version.trim().length > LIMITS.version) e.version = `Version must be ${LIMITS.version} characters or fewer.`;
+
+  // Optional fields
+  if (input.moduleName && input.moduleName.trim().length > LIMITS.name) {
+    e.moduleName = `Module name must be ${LIMITS.name} characters or fewer.`;
+  }
+  if (input.description && input.description.trim().length > LIMITS.description) {
+    e.description = `Description must be ${LIMITS.description} characters or fewer.`;
+  }
+  if (input.version && input.version.trim().length > LIMITS.version) {
+    e.version = `Version must be ${LIMITS.version} characters or fewer.`;
+  }
   const url = (input.reviewUrl || input.proofUrl || '').trim();
   if (url && (url.length > LIMITS.reviewUrl || !isValidProofUrl(url))) {
     e.reviewUrl = `Enter a valid HTTP(S) URL up to ${LIMITS.reviewUrl} characters.`;
