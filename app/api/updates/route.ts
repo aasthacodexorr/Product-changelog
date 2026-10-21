@@ -114,12 +114,12 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Sorting: default newest release dates first
+    // Sorting: default newest release dates first, with latest created on top
     const sort = searchParams.get('sort')?.toLowerCase();
     const orderBy: Prisma.UpdateOrderByWithRelationInput[] =
       sort === 'oldest'
-        ? [{ releaseDate: 'asc' }, { title: 'asc' }]
-        : [{ releaseDate: 'desc' }, { title: 'asc' }];
+        ? [{ releaseDate: 'asc' }, { createdAt: 'asc' }]
+        : [{ releaseDate: 'desc' }, { createdAt: 'desc' }];
 
     // Pagination
     const pageParam = parseInt(searchParams.get('page') || '1', 10);
@@ -172,10 +172,18 @@ export async function POST(req: NextRequest) {
     const parsed = createUpdateSchema.safeParse(body);
 
     if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const fieldName = issue.path[0];
+        if (fieldName && typeof fieldName === 'string') {
+          fieldErrors[fieldName] = issue.message;
+        }
+      }
       return NextResponse.json(
         {
           error: 'Validation failed',
           issues: parsed.error.issues.map((i) => i.message),
+          fieldErrors,
         },
         { status: 400 }
       );
