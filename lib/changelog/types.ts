@@ -1,5 +1,5 @@
 /**
- * Changelog data model. Documented exchange format: see README.md ("JSON schema").
+ * Changelog data model.
  */
 
 export const SCHEMA_VERSION = 1;
@@ -14,19 +14,38 @@ export type UpdateType = string;
 export interface Product {
   id: string;
   name: string;
+  createdAt?: string;
+  updatedAt?: string;
+  updateCount?: number;
+}
+
+export interface ApiUpdateType {
+  id: string;
+  name: string;
+  normalizedName: string;
+  isDefault: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  updateCount?: number;
 }
 
 export interface ChangelogUpdate {
   id: string;
   productId: string;
+  productName?: string;
   moduleName: string;
   title: string;
   description: string;
   /** Local calendar date, `YYYY-MM-DD`. */
   releaseDate: string;
   type: UpdateType;
+  typeId?: string;
   version?: string;
+  reviewUrl?: string | null;
   proofUrl?: string;
+  status?: 'DRAFT' | 'PUBLISHED';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Dataset {
@@ -49,9 +68,12 @@ export interface UpdateInput {
   title: string;
   description: string;
   releaseDate: string;
+  typeId?: string;
   type: UpdateType;
   version: string;
-  proofUrl: string;
+  reviewUrl: string;
+  proofUrl?: string;
+  status?: 'DRAFT' | 'PUBLISHED';
 }
 
 export type FieldErrors = Partial<Record<keyof UpdateInput, string>>;
@@ -67,6 +89,7 @@ export const LIMITS = {
   title: 200,
   description: 5000,
   version: 40,
+  reviewUrl: 2048,
   proofUrl: 2048,
   typeName: 40,
   customTypes: 100,

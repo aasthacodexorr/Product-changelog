@@ -29,9 +29,9 @@ export function isValidProofUrl(value: string): boolean {
   }
 }
 
-const PRODUCT_KEYS = ['id', 'name'];
+const PRODUCT_KEYS = ['id', 'name', 'createdAt', 'updatedAt', 'updateCount'];
 const UPDATE_KEYS = [
-  'id', 'productId', 'moduleName', 'title', 'description', 'releaseDate', 'type', 'version', 'proofUrl',
+  'id', 'productId', 'productName', 'moduleName', 'title', 'description', 'releaseDate', 'type', 'typeId', 'version', 'proofUrl', 'reviewUrl', 'status', 'createdAt', 'updatedAt',
 ];
 
 function reqString(
@@ -106,10 +106,11 @@ export function validateDataset(raw: unknown): Result<Dataset> {
       } else version = u.version;
     }
     let proofUrl: string | undefined;
-    if (u.proofUrl !== undefined && u.proofUrl !== null && u.proofUrl !== '') {
-      if (typeof u.proofUrl !== 'string' || u.proofUrl.length > LIMITS.proofUrl || !isValidProofUrl(u.proofUrl.trim())) {
+    const urlCandidate = u.proofUrl ?? u.reviewUrl;
+    if (urlCandidate !== undefined && urlCandidate !== null && urlCandidate !== '') {
+      if (typeof urlCandidate !== 'string' || urlCandidate.length > LIMITS.proofUrl || !isValidProofUrl(urlCandidate.trim())) {
         errors.push(`${where}: "proofUrl" must be an HTTP(S) URL up to ${LIMITS.proofUrl} characters.`);
-      } else proofUrl = u.proofUrl.trim();
+      } else proofUrl = urlCandidate.trim();
     }
     if (
       id === undefined || productId === undefined || moduleName === undefined ||
@@ -126,6 +127,9 @@ export function validateDataset(raw: unknown): Result<Dataset> {
     };
     if (version) rec.version = version;
     if (proofUrl) rec.proofUrl = proofUrl;
+    if (typeof u.status === 'string' && (u.status === 'DRAFT' || u.status === 'PUBLISHED')) {
+      rec.status = u.status;
+    }
     updates.push(rec);
   });
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { Spinner } from './Spinner';
 
 interface ModalProps {
   title: string;
@@ -43,18 +44,34 @@ interface ConfirmProps {
   title: string;
   confirmLabel: string;
   danger?: boolean;
+  loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   children: React.ReactNode;
 }
 
-export function ConfirmDialog({ title, confirmLabel, danger, onConfirm, onCancel, children }: ConfirmProps) {
+export function ConfirmDialog({ title, confirmLabel, danger, loading = false, onConfirm, onCancel, children }: ConfirmProps) {
   return (
     <Modal title={title} onClose={onCancel}>
       <div className="mb-5 space-y-2 text-sm text-[#c9d1d9]">{children}</div>
       <div className="flex justify-end gap-2">
-        <button className="btn" onClick={onCancel}>Cancel</button>
-        <button className={`btn ${danger ? 'btn-danger' : 'btn-primary'}`} onClick={onConfirm}>{confirmLabel}</button>
+        <button className="btn" onClick={onCancel} disabled={loading}>
+          Cancel
+        </button>
+        <button
+          className={`btn ${danger ? 'btn-danger' : 'btn-primary'}`}
+          onClick={onConfirm}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Spinner className="h-4 w-4" />
+              <span>{confirmLabel}…</span>
+            </>
+          ) : (
+            confirmLabel
+          )}
+        </button>
       </div>
     </Modal>
   );

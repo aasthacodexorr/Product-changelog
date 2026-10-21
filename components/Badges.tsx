@@ -9,6 +9,21 @@ export function TypeBadge({ type }: { type: UpdateType }) {
   );
 }
 
+export function StatusBadge({ status }: { status: 'DRAFT' | 'PUBLISHED' }) {
+  if (status === 'PUBLISHED') {
+    return (
+      <span className="rounded-full border border-[#238636] bg-[#238636]/15 px-2.5 py-px text-xs font-semibold text-[#3fb950]">
+        Published
+      </span>
+    );
+  }
+  return (
+    <span className="rounded-full border border-[#d29922] bg-[#d29922]/15 px-2.5 py-px text-xs font-semibold text-[#e3b341]">
+      Draft
+    </span>
+  );
+}
+
 export function ChevronIcon({ open, className = '' }: { open: boolean; className?: string }) {
   return (
     <svg

@@ -26,11 +26,22 @@ export function newId(prefix: string): string {
 }
 
 export function emptyInput(productId = ''): UpdateInput {
-  return { productId, moduleName: '', title: '', description: '', releaseDate: todayLocal(), type: '', version: '', proofUrl: '' };
+  return {
+    productId,
+    moduleName: '',
+    title: '',
+    description: '',
+    releaseDate: todayLocal(),
+    type: '',
+    version: '',
+    reviewUrl: '',
+    proofUrl: '',
+  };
 }
 
 export function inputFromUpdate(u: ChangelogUpdate): UpdateInput {
-  return {
+  const url = u.reviewUrl || u.proofUrl || '';
+  const input: UpdateInput = {
     productId: u.productId,
     moduleName: u.moduleName,
     title: u.title,
@@ -38,8 +49,12 @@ export function inputFromUpdate(u: ChangelogUpdate): UpdateInput {
     releaseDate: u.releaseDate,
     type: u.type,
     version: u.version ?? '',
-    proofUrl: u.proofUrl ?? '',
+    reviewUrl: url,
+    proofUrl: url,
   };
+  if (u.typeId) input.typeId = u.typeId;
+  if (u.status) input.status = u.status;
+  return input;
 }
 
 export function validateUpdateInput(input: UpdateInput, products: Product[], types?: string[]): FieldErrors {
@@ -58,9 +73,10 @@ export function validateUpdateInput(input: UpdateInput, products: Product[], typ
   if (!normalizeTypeName(input.type)) e.type = 'Select an update type.';
   else if (types && !canonicalType(input.type, types)) e.type = 'Unknown update type.';
   if (input.version.trim().length > LIMITS.version) e.version = `Version must be ${LIMITS.version} characters or fewer.`;
-  const proofUrl = input.proofUrl.trim();
-  if (proofUrl && (proofUrl.length > LIMITS.proofUrl || !isValidProofUrl(proofUrl))) {
-    e.proofUrl = `Enter a valid HTTP(S) URL up to ${LIMITS.proofUrl} characters.`;
+  const url = (input.reviewUrl || input.proofUrl || '').trim();
+  if (url && (url.length > LIMITS.reviewUrl || !isValidProofUrl(url))) {
+    e.reviewUrl = `Enter a valid HTTP(S) URL up to ${LIMITS.reviewUrl} characters.`;
+    e.proofUrl = e.reviewUrl;
   }
   return e;
 }
@@ -77,8 +93,12 @@ function toUpdate(id: string, input: UpdateInput, types: string[]): ChangelogUpd
   };
   const v = input.version.trim();
   if (v) u.version = v;
-  const proofUrl = input.proofUrl.trim();
-  if (proofUrl) u.proofUrl = proofUrl;
+  const proofUrl = (input.reviewUrl || input.proofUrl || '').trim();
+  if (proofUrl) {
+    u.proofUrl = proofUrl;
+  }
+  if (input.typeId) u.typeId = input.typeId;
+  if (input.status) u.status = input.status;
   return u;
 }
 
