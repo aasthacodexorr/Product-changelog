@@ -18,6 +18,7 @@ import { AddProductDialog } from '@/components/AddProductDialog';
 import { ConfirmDialog } from '@/components/Modal';
 import { Spinner } from '@/components/Spinner';
 import { ChangelogSkeleton } from '@/components/ChangelogSkeleton';
+import { ManageDialog } from '@/components/ManageDialog';
 
 type FilterTab = 'all' | 'published' | 'draft';
 
@@ -35,6 +36,7 @@ export function PanelClient() {
   const [deletingInProgress, setDeletingInProgress] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [managing, setManaging] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -43,9 +45,9 @@ export function PanelClient() {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const loadAll = async () => {
+  const loadAll = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       setErrorMessage(null);
       const [uRes, pRes, tRes] = await Promise.all([
         fetch('/api/updates', { cache: 'no-store' }),
@@ -73,7 +75,7 @@ export function PanelClient() {
       console.error(err);
       setErrorMessage(err instanceof Error ? err.message : 'Failed to connect to the backend.');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -121,20 +123,32 @@ export function PanelClient() {
 
       // Find typeId from update types
       let typeId = input.typeId;
-      if (!typeId) {
+      if (!typeId && input.type) {
         const found = types.find((t) => t.name.toLowerCase() === input.type.toLowerCase());
         if (found) typeId = found.id;
       }
 
-      if (!typeId && types.length > 0) {
-        typeId = types[0].id;
+      if (!typeId) {
+        return { type: 'Update type is required.' };
+      }
+
+      if (!input.productId) {
+        return { productId: 'Product is required.' };
+      }
+
+      if (!input.title || !input.title.trim()) {
+        return { title: 'Update title is required.' };
+      }
+
+      if (!input.releaseDate) {
+        return { releaseDate: 'Release date is required.' };
       }
 
       const bodyPayload = {
         productId: input.productId,
-        moduleName: input.moduleName,
-        title: input.title,
-        description: input.description,
+        moduleName: input.moduleName || '',
+        title: input.title.trim(),
+        description: input.description || '',
         releaseDate: input.releaseDate,
         typeId,
         version: input.version || null,
@@ -151,10 +165,18 @@ export function PanelClient() {
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
+        if (data.fieldErrors) {
+          return data.fieldErrors;
+        }
         if (data.issues) {
           const fe: FieldErrors = {};
           for (const msg of data.issues) {
-            fe.title = msg;
+            const lower = msg.toLowerCase();
+            if (lower.includes('product')) fe.productId = msg;
+            else if (lower.includes('title')) fe.title = msg;
+            else if (lower.includes('release date') || lower.includes('date')) fe.releaseDate = msg;
+            else if (lower.includes('type')) fe.type = msg;
+            else fe.title = msg;
           }
           return fe;
         }
@@ -269,15 +291,45 @@ export function PanelClient() {
     <main className="mx-auto max-w-4xl px-4 pt-6 pb-16">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#30363d] pb-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#e6edf3]">Employee Changelog Panel</h1>
-          <p className="text-sm text-[#8b949e]">PostgreSQL Database &middot; Manage drafts and published updates</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[#e6edf3]">Product Updates</h1>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/changelog"
-            className="rounded-md border border-[#30363d] px-3 py-1 text-sm text-[#8b949e] hover:text-[#e6edf3]"
+            className="rounded-md flex justify-center items-center gap-1 border border-[#30363d] px-3 py-1 text-sm text-[#8b949e] hover:text-[#e6edf3]"
           >
-            Client View &rarr;
+            Client
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 512 512">
+              <rect width="512" height="512" fill="none" />
+
+
+              <path
+                d="M224 144 H160
+       A80 80 0 0 0 80 224
+       V368
+       A80 80 0 0 0 160 448
+       H288
+       A80 80 0 0 0 368 368
+       V288"
+                fill="none"
+                stroke="#B8BBDD"
+                strokeWidth="32"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+
+              <path
+                d="M272 80 H432 V240
+       M432 80 L192 320"
+                fill="none"
+                stroke="#4655FF"
+                strokeWidth="32"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+
           </Link>
           <button
             onClick={handleLogout}
@@ -324,6 +376,9 @@ export function PanelClient() {
             </button>
             <button className="btn" onClick={() => setAddingProduct({ thenAddUpdate: false })}>
               + Add product
+            </button>
+            <button className="btn" onClick={() => setManaging(true)}>
+              Manage
             </button>
           </div>
         </div>
@@ -434,10 +489,19 @@ export function PanelClient() {
           products={products}
           types={types.map((t) => ({ id: t.id, name: t.name }))}
           onAddType={handleAddType}
-          defaultProductId={products[0]?.id || ''}
+          defaultProductId=""
           editing={form.editing}
           onSubmit={submitUpdate}
           onCancel={() => setForm(null)}
+        />
+      )}
+
+      {managing && (
+        <ManageDialog
+          products={products}
+          types={types}
+          onClose={() => setManaging(false)}
+          onRefresh={() => loadAll(true)}
         />
       )}
 
