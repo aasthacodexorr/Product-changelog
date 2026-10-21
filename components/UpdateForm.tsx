@@ -94,8 +94,12 @@ export function UpdateForm({
     }
   };
 
-  const set = <K extends keyof UpdateInput>(k: K, v: UpdateInput[K]) =>
+  const set = <K extends keyof UpdateInput>(k: K, v: UpdateInput[K]) => {
     setInput((s) => ({ ...s, [k]: v }));
+    if (errors[k]) {
+      setErrors((prev) => ({ ...prev, [k]: undefined }));
+    }
+  };
 
   const ad = (k: keyof UpdateInput) => ({
     'aria-invalid': !!errors[k],
@@ -104,6 +108,26 @@ export function UpdateForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const newErrors: FieldErrors = {};
+
+    if (!input.productId) {
+      newErrors.productId = 'Product is required.';
+    }
+    if (!input.title || !input.title.trim()) {
+      newErrors.title = 'Title is required.';
+    }
+    if (!input.releaseDate) {
+      newErrors.releaseDate = 'Release date is required.';
+    }
+    if (!input.type || !input.type.trim()) {
+      newErrors.type = 'Update type is required.';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setSubmitting(true);
     try {
       const errs = await onSubmit(input);
@@ -136,7 +160,7 @@ export function UpdateForm({
         </Field>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field id="f-moduleName" label="Module name" required error={errors.moduleName}>
+          <Field id="f-moduleName" label="Module name" error={errors.moduleName}>
             <input
               id="f-moduleName"
               className="field"
@@ -150,7 +174,7 @@ export function UpdateForm({
             <input
               id="f-version"
               className="field"
-              placeholder="e.g. 2.4.0 (optional)"
+              placeholder="e.g. 2.4.0"
               value={input.version}
               onChange={(e) => set('version', e.target.value)}
               {...ad('version')}
@@ -169,7 +193,7 @@ export function UpdateForm({
           />
         </Field>
 
-        <Field id="f-description" label="Description" required error={errors.description}>
+        <Field id="f-description" label="Description" error={errors.description}>
           <textarea
             id="f-description"
             rows={4}
@@ -181,12 +205,12 @@ export function UpdateForm({
           />
         </Field>
 
-        <Field id="f-reviewUrl" label="Review URL (Optional)" error={errors.reviewUrl || errors.proofUrl}>
+        <Field id="f-reviewUrl" label="Review URL" error={errors.reviewUrl || errors.proofUrl}>
           <input
             id="f-reviewUrl"
             type="url"
             className="field"
-            placeholder="https://github.com/org/repo/pull/123 or https://example.com/docs"
+            placeholder="https://example.com/docs"
             value={input.reviewUrl || input.proofUrl || ''}
             onChange={(e) => {
               set('reviewUrl', e.target.value);
@@ -194,9 +218,6 @@ export function UpdateForm({
             }}
             {...ad('reviewUrl')}
           />
-          <p className="mt-1 text-xs text-[#8b949e]">
-            Optional link to a pull request, ticket, or documentation (must start with http:// or https://)
-          </p>
         </Field>
 
         <div className="grid gap-3 sm:grid-cols-2">
@@ -255,8 +276,8 @@ export function UpdateForm({
             value={input.status || 'DRAFT'}
             onChange={(e) => set('status', e.target.value as 'DRAFT' | 'PUBLISHED')}
           >
-            <option value="DRAFT">Draft (visible to employees only)</option>
-            <option value="PUBLISHED">Published (visible to clients)</option>
+            <option value="DRAFT">Draft (For internal use only) </option>
+            <option value="PUBLISHED">Published (For clients)</option>
           </select>
         </Field>
 
