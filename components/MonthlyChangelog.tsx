@@ -55,22 +55,49 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                         <TypeBadge type={u.type} />
                         {showStatus && u.status && <StatusBadge status={u.status} />}
                       </div>
-                      <h3 className="text-[17px] font-semibold">{u.title}</h3>
-                      <p className="mb-2 text-[13px] text-[#8b949e]">
-                        Product: {productName} · Module: {u.moduleName}
-                        {u.version && <> · Version: {u.version}</>}
-                      </p>
+                      <h1 className="text-[19px] font-semibold">{productName}</h1>
+                      <h3 className="text-[17px] font-semibold flex items-center gap-1">{u.title}
+                        {reviewUrl && (
+                          <a
+                            href={reviewUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-2 text-[#58a6ff] hover:underline"
+                          >
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
+                              <rect width="512" height="512" fill="none" />
+
+                              <path
+                                d="M224 144 H160
+       A80 80 0 0 0 80 224
+       V368
+       A80 80 0 0 0 160 448
+       H288
+       A80 80 0 0 0 368 368
+       V288"
+                                fill="none"
+                                stroke="#B8BBDD"
+                                strokeWidth="32"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+
+
+                              <path
+                                d="M272 80 H432 V240
+       M432 80 L192 320"
+                                fill="none"
+                                stroke="#4655FF"
+                                strokeWidth="32"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </a>
+                        )}
+                      </h3>
                       <p className="whitespace-pre-wrap break-words text-sm text-[#c9d1d9]">{u.description}</p>
-                      {reviewUrl && (
-                        <a
-                          className="mt-2 inline-block text-sm text-[#58a6ff] hover:underline"
-                          href={reviewUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Review Changes
-                        </a>
-                      )}
                       {renderActions && <div className="mt-3 flex flex-wrap gap-2">{renderActions(u)}</div>}
                     </li>
                   );
