@@ -38,9 +38,8 @@ export default function LoginPage() {
         return;
       }
 
-      // Successful login
-      router.push('/panel');
-      router.refresh();
+      // Successful login - full navigation ensures the session cookie is sent and /panel evaluates immediately
+      window.location.href = '/panel';
     } catch {
       setError('An error occurred while connecting to the server. Please try again.');
     } finally {
