@@ -63,10 +63,18 @@ export async function PUT(req: NextRequest, context: RouteContext) {
     const parsed = editUpdateSchema.safeParse(body);
 
     if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const fieldName = issue.path[0];
+        if (fieldName && typeof fieldName === 'string') {
+          fieldErrors[fieldName] = issue.message;
+        }
+      }
       return NextResponse.json(
         {
           error: 'Validation failed',
           issues: parsed.error.issues.map((i) => i.message),
+          fieldErrors,
         },
         { status: 400 }
       );
