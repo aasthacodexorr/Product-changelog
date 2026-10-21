@@ -29,7 +29,11 @@ export interface MonthGroup {
  */
 export function groupByMonth(updates: ChangelogUpdate[]): MonthGroup[] {
   const sorted = [...updates].sort(
-    (a, b) => b.releaseDate.localeCompare(a.releaseDate) || a.title.localeCompare(b.title),
+    (a, b) =>
+      b.releaseDate.localeCompare(a.releaseDate) ||
+      (b.createdAt && a.createdAt ? b.createdAt.localeCompare(a.createdAt) : 0) ||
+      (b.id || '').localeCompare(a.id || '') ||
+      a.title.localeCompare(b.title),
   );
   const groups: MonthGroup[] = [];
   for (const u of sorted) {
