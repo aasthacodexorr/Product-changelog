@@ -95,20 +95,23 @@ export const createUpdateSchema = z.object({
   moduleName: z
     .string()
     .trim()
-    .min(1, 'Module name is required.')
-    .max(LIMITS.name, `Module name must be ${LIMITS.name} characters or fewer.`),
+    .max(LIMITS.name, `Module name must be ${LIMITS.name} characters or fewer.`)
+    .optional()
+    .default(''),
   title: z
     .string()
     .trim()
-    .min(1, 'Title is required.')
+    .min(1, 'Update title is required.')
     .max(LIMITS.title, `Title must be ${LIMITS.title} characters or fewer.`),
   description: z
     .string()
     .trim()
-    .min(1, 'Description is required.')
-    .max(LIMITS.description, `Description must be ${LIMITS.description} characters or fewer.`),
+    .max(LIMITS.description, `Description must be ${LIMITS.description} characters or fewer.`)
+    .optional()
+    .default(''),
   releaseDate: z
     .string()
+    .min(1, 'Release date is required.')
     .regex(dateRegex, 'Release date must be a valid YYYY-MM-DD date.')
     .refine((val) => {
       const [y, m, d] = val.split('-').map(Number);
@@ -132,23 +135,22 @@ export const editUpdateSchema = z.object({
   moduleName: z
     .string()
     .trim()
-    .min(1, 'Module name is required.')
     .max(LIMITS.name, `Module name must be ${LIMITS.name} characters or fewer.`)
     .optional(),
   title: z
     .string()
     .trim()
-    .min(1, 'Title is required.')
+    .min(1, 'Update title is required.')
     .max(LIMITS.title, `Title must be ${LIMITS.title} characters or fewer.`)
     .optional(),
   description: z
     .string()
     .trim()
-    .min(1, 'Description is required.')
     .max(LIMITS.description, `Description must be ${LIMITS.description} characters or fewer.`)
     .optional(),
   releaseDate: z
     .string()
+    .min(1, 'Release date is required.')
     .regex(dateRegex, 'Release date must be a valid YYYY-MM-DD date.')
     .refine((val) => {
       const [y, m, d] = val.split('-').map(Number);
