@@ -43,7 +43,7 @@ export function AddProductDialog({
           aria-invalid={errors.length > 0}
         />
         {errors.map((e) => (
-          <p key={e} role="alert" className="mt-1 text-xs text-[#f85149]">
+          <p key={e} role="alert" className="mt-1 text-xs text-[#dc2626]">
             {e}
           </p>
         ))}

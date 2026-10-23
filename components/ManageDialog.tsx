@@ -249,7 +249,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
     <Modal title="Manage Products & Update Types" onClose={onClose} wide>
       <div className="space-y-4">
         {/* Navigation Tabs */}
-        <div className="flex rounded-md border border-[#30363d] p-0.5" role="tablist">
+        <div className="flex rounded-md border border-[#2e8cff] p-0.5" role="tablist">
           <button
             role="tab"
             aria-selected={activeTab === 'products'}
@@ -259,8 +259,8 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
             }}
             className={`flex-1 cursor-pointer rounded py-1.5 text-center text-sm font-medium transition-colors ${
               activeTab === 'products'
-                ? 'bg-[#30363d] text-[#e6edf3]'
-                : 'text-[#8b949e] hover:text-[#e6edf3]'
+                ? 'bg-[#2e8cff] text-white'
+                : 'text-[#2e8cff] hover:bg-[#2e8cff]/10'
             }`}
           >
             Manage Products ({localProducts.length})
@@ -274,8 +274,8 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
             }}
             className={`flex-1 cursor-pointer rounded py-1.5 text-center text-sm font-medium transition-colors ${
               activeTab === 'types'
-                ? 'bg-[#30363d] text-[#e6edf3]'
-                : 'text-[#8b949e] hover:text-[#e6edf3]'
+                ? 'bg-[#2e8cff] text-white'
+                : 'text-[#2e8cff] hover:bg-[#2e8cff]/10'
             }`}
           >
             Manage Update Types ({localTypes.length})
@@ -288,7 +288,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
             {productError && (
               <div
                 role="alert"
-                className="rounded-md border border-[#f85149]/60 bg-[#f85149]/10 p-2.5 text-xs text-[#f85149]"
+                className="rounded-md border border-[#dc2626] bg-[#dc2626]/10 p-2.5 text-xs text-[#dc2626]"
               >
                 {productError}
               </div>
@@ -323,20 +323,20 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
             <div className="max-h-[50vh] overflow-y-auto space-y-2 pr-1">
               {/* Show shimmer card while adding a new product */}
               {addingProduct && (
-                <div className="card flex items-center justify-between gap-3 p-3 border border-[#30363d]/60 bg-[#161b22] animate-pulse">
+                <div className="card flex items-center justify-between gap-3 p-3 border border-[#f5f5f5] bg-[#fafafa] animate-pulse">
                   <div className="flex items-center gap-2 flex-1">
-                    <div className="h-4.5 w-44 rounded bg-[#21262d]" />
-                    <div className="h-4 w-16 rounded-full bg-[#21262d]" />
+                    <div className="h-4.5 w-44 rounded bg-[#f5f5f5]" />
+                    <div className="h-4 w-16 rounded-full bg-[#f5f5f5]" />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-6 w-11 rounded bg-[#21262d]" />
-                    <div className="h-6 w-12 rounded bg-[#21262d]" />
+                    <div className="h-6 w-11 rounded bg-[#f5f5f5]" />
+                    <div className="h-6 w-12 rounded bg-[#f5f5f5]" />
                   </div>
                 </div>
               )}
 
               {localProducts.length === 0 && !addingProduct ? (
-                <p className="py-6 text-center text-sm text-[#8b949e]">No products added yet.</p>
+                <p className="py-6 text-center text-sm text-[#666]">No products added yet.</p>
               ) : (
                 localProducts.map((p) => {
                   const isEditing = editingProductId === p.id;
@@ -348,15 +348,15 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                     return (
                       <div
                         key={p.id}
-                        className="card flex items-center justify-between gap-3 p-3 border border-[#30363d]/60 bg-[#161b22] animate-pulse"
+                        className="card flex items-center justify-between gap-3 p-3 border border-[#f5f5f5] bg-[#fafafa] animate-pulse"
                       >
                         <div className="flex items-center gap-2 flex-1">
-                          <div className="h-4.5 w-40 rounded bg-[#21262d]" />
-                          <div className="h-4 w-16 rounded-full bg-[#21262d]" />
+                          <div className="h-4.5 w-40 rounded bg-[#f5f5f5]" />
+                          <div className="h-4 w-16 rounded-full bg-[#f5f5f5]" />
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <div className="h-6 w-11 rounded bg-[#21262d]" />
-                          <div className="h-6 w-12 rounded bg-[#21262d]" />
+                          <div className="h-6 w-11 rounded bg-[#f5f5f5]" />
+                          <div className="h-6 w-12 rounded bg-[#f5f5f5]" />
                         </div>
                       </div>
                     );
@@ -399,9 +399,9 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                       ) : (
                         <>
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-[#e6edf3]">{p.name}</span>
+                            <span className="font-medium text-[#2e8cff]">{p.name}</span>
                             {typeof p.updateCount === 'number' && (
-                              <span className="rounded-full bg-[#21262d] px-2 py-0.5 text-xs text-[#8b949e]">
+                              <span className="rounded-full bg-[#f5f5f5] px-2 py-0.5 text-xs text-[#666]">
                                 {p.updateCount} update{p.updateCount === 1 ? '' : 's'}
                               </span>
                             )}
@@ -443,7 +443,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
             {typeError && (
               <div
                 role="alert"
-                className="rounded-md border border-[#f85149]/60 bg-[#f85149]/10 p-2.5 text-xs text-[#f85149]"
+                className="rounded-md border border-[#dc2626] bg-[#dc2626]/10 p-2.5 text-xs text-[#dc2626]"
               >
                 {typeError}
               </div>
@@ -478,20 +478,20 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
             <div className="max-h-[50vh] overflow-y-auto space-y-2 pr-1">
               {/* Show shimmer card while adding a new custom type */}
               {addingType && (
-                <div className="card flex items-center justify-between gap-3 p-3 border border-[#30363d]/60 bg-[#161b22] animate-pulse">
+                <div className="card flex items-center justify-between gap-3 p-3 border border-[#f5f5f5] bg-[#fafafa] animate-pulse">
                   <div className="flex items-center gap-2 flex-1">
-                    <div className="h-4.5 w-40 rounded bg-[#21262d]" />
-                    <div className="h-4 w-16 rounded-full bg-[#21262d]" />
+                    <div className="h-4.5 w-40 rounded bg-[#f5f5f5]" />
+                    <div className="h-4 w-16 rounded-full bg-[#f5f5f5]" />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="h-6 w-11 rounded bg-[#21262d]" />
-                    <div className="h-6 w-12 rounded bg-[#21262d]" />
+                    <div className="h-6 w-11 rounded bg-[#f5f5f5]" />
+                    <div className="h-6 w-12 rounded bg-[#f5f5f5]" />
                   </div>
                 </div>
               )}
 
               {localTypes.length === 0 && !addingType ? (
-                <p className="py-6 text-center text-sm text-[#8b949e]">No update types found.</p>
+                <p className="py-6 text-center text-sm text-[#666]">No update types found.</p>
               ) : (
                 localTypes.map((t) => {
                   const isEditing = editingTypeId === t.id;
@@ -503,15 +503,15 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                     return (
                       <div
                         key={t.id}
-                        className="card flex items-center justify-between gap-3 p-3 border border-[#30363d]/60 bg-[#161b22] animate-pulse"
+                        className="card flex items-center justify-between gap-3 p-3 border border-[#f5f5f5] bg-[#fafafa] animate-pulse"
                       >
                         <div className="flex items-center gap-2 flex-1">
-                          <div className="h-4.5 w-36 rounded bg-[#21262d]" />
-                          <div className="h-4 w-16 rounded-full bg-[#21262d]" />
+                          <div className="h-4.5 w-36 rounded bg-[#f5f5f5]" />
+                          <div className="h-4 w-16 rounded-full bg-[#f5f5f5]" />
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <div className="h-6 w-11 rounded bg-[#21262d]" />
-                          <div className="h-6 w-12 rounded bg-[#21262d]" />
+                          <div className="h-6 w-11 rounded bg-[#f5f5f5]" />
+                          <div className="h-6 w-12 rounded bg-[#f5f5f5]" />
                         </div>
                       </div>
                     );
@@ -554,18 +554,18 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                       ) : (
                         <>
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-[#e6edf3]">{t.name}</span>
+                            <span className="font-medium text-[#2e8cff]">{t.name}</span>
                             {t.isDefault ? (
-                              <span className="rounded-full bg-[#1f6feb]/15 border border-[#1f6feb]/40 px-2 py-0.5 text-xs text-[#58a6ff]">
+                              <span className="rounded-full bg-[#2e8cff]/15 border border-[#2e8cff]/40 px-2 py-0.5 text-xs text-[#2e8cff]">
                                 Default
                               </span>
                             ) : (
-                              <span className="rounded-full bg-[#238636]/15 border border-[#238636]/40 px-2 py-0.5 text-xs text-[#3fb950]">
+                              <span className="rounded-full bg-[#10b981]/15 border border-[#10b981]/40 px-2 py-0.5 text-xs text-[#10b981]">
                                 Custom
                               </span>
                             )}
                             {typeof t.updateCount === 'number' && (
-                              <span className="rounded-full bg-[#21262d] px-2 py-0.5 text-xs text-[#8b949e]">
+                              <span className="rounded-full bg-[#f5f5f5] px-2 py-0.5 text-xs text-[#666]">
                                 {t.updateCount} update{t.updateCount === 1 ? '' : 's'}
                               </span>
                             )}
@@ -584,7 +584,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                             </button>
                             {t.isDefault ? (
                               <span
-                                className="text-xs text-[#8b949e] italic px-2"
+                                className="text-xs text-[#666] italic px-2"
                                 title="Default types cannot be deleted"
                               >
                                 Protected
@@ -610,7 +610,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
           </div>
         )}
 
-        <div className="flex justify-end pt-2 border-t border-[#30363d]">
+        <div className="flex justify-end pt-2 border-t border-[#2e8cff]">
           <button type="button" className="btn" onClick={onClose}>
             Close
           </button>

@@ -34,7 +34,7 @@ export function ChevronIcon({ open, className = '' }: { open: boolean; className
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
-      className={`h-5 w-5 shrink-0 text-[#8b949e] transition-transform ${open ? '' : '-rotate-90'} ${className}`}
+      className={`h-5 w-5 shrink-0 text-[#666] transition-transform ${open ? '' : '-rotate-90'} ${className}`}
     >
       <path d="M5 7.5l5 5 5-5" />
     </svg>

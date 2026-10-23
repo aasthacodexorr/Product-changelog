@@ -44,11 +44,11 @@ function Field({
   return (
     <div>
       <label htmlFor={id} className="mb-1 block text-sm font-medium">
-        {label} {required ? <span className="text-[#f85149]" aria-hidden>*</span> : null}
+        {label} {required ? <span className="text-[#dc2626]" aria-hidden>*</span> : null}
       </label>
       {children}
       {error && (
-        <p id={`${id}-err`} role="alert" className="mt-1 text-xs text-[#f85149]">
+        <p id={`${id}-err`} role="alert" className="mt-1 text-xs text-[#dc2626]">
           {error}
         </p>
       )}
@@ -323,7 +323,7 @@ export function UpdateForm({
               </button>
             </div>
             {typeErrors.map((err) => (
-              <p key={err} role="alert" className="text-xs text-[#f85149]">
+              <p key={err} role="alert" className="text-xs text-[#dc2626]">
                 {err}
               </p>
             ))}

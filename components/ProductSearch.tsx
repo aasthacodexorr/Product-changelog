@@ -24,7 +24,7 @@ export function ProductSearch({ value, onChange, products }: Props) {
   return (
     <div className="relative">
       <label htmlFor="product-search" className="sr-only">Search by product name</label>
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#8b949e]" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#666]" aria-hidden="true">
         <circle cx="9" cy="9" r="5.5" /><path d="M13.5 13.5L17 17" />
       </svg>
       <input
@@ -50,7 +50,7 @@ export function ProductSearch({ value, onChange, products }: Props) {
       />
       {value && (
         <button type="button" aria-label="Clear search" onClick={() => onChange('')}
-          className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-[#8b949e] hover:text-[#e6edf3]">
+          className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-[#666] hover:text-[#2e8cff]">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" /></svg>
         </button>
       )}
@@ -59,7 +59,7 @@ export function ProductSearch({ value, onChange, products }: Props) {
           {suggestions.map((p, i) => (
             <li key={p.id} role="option" aria-selected={i === active}
               onMouseDown={(e) => { e.preventDefault(); pick(p.name); }}
-              className={`cursor-pointer px-3 py-2 text-sm ${i === active ? 'bg-[#30363d]' : 'hover:bg-[#21262d]'}`}>
+              className={`cursor-pointer px-3 py-2 text-sm ${i === active ? 'bg-[#2e8cff] text-white' : 'hover:bg-[#2e8cff]/10'}`}>
               {p.name}
             </li>
           ))}

@@ -34,11 +34,11 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                 aria-expanded={open}
                 aria-controls={panelId}
                 onClick={() => setOverrides((s) => ({ ...s, [g.key]: !open }))}
-                className="flex w-full cursor-pointer items-center gap-2 border-b border-[#30363d] py-2 text-left text-xl font-semibold hover:text-[#58a6ff]"
+                className="flex w-full cursor-pointer items-center gap-2 border-b border-[#2e8cff] py-2 text-left text-xl font-semibold hover:text-[#2e8cff]"
               >
                 <ChevronIcon open={open} />
                 {g.label}
-                <span className="ml-auto text-xs font-normal text-[#8b949e]">
+                <span className="ml-auto text-xs font-normal text-[#666]">
                   {g.updates.length} update{g.updates.length === 1 ? '' : 's'}
                 </span>
               </button>
@@ -50,7 +50,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                   const productName = u.productName || names.get(u.productId) || 'Unknown';
                   return (
                     <li key={u.id} className="card p-4" data-update-id={u.id}>
-                      <div className="mb-1.5 flex flex-wrap items-center gap-2 text-[13px] text-[#8b949e]">
+                      <div className="mb-1.5 flex flex-wrap items-center gap-2 text-[13px] text-[#666]">
                         <span>{formatDayMonth(u.releaseDate)}</span>
                         <TypeBadge type={u.type} />
                         {showStatus && u.status && <StatusBadge status={u.status} />}
@@ -62,7 +62,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                             href={reviewUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ml-2 text-[#58a6ff] hover:underline"
+                            className="ml-2 text-[#2e8cff] hover:underline"
                           >
 
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 512 512">
@@ -88,7 +88,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                                 d="M272 80 H432 V240
        M432 80 L192 320"
                                 fill="none"
-                                stroke="#4655FF"
+                                stroke="#2e8cff"
                                 strokeWidth="32"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -97,7 +97,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                           </a>
                         )}
                       </h3>
-                      <p className="whitespace-pre-wrap break-words text-sm text-[#c9d1d9]">{u.description}</p>
+                      <p className="whitespace-pre-wrap break-words text-sm">{u.description}</p>
                       {renderActions && <div className="mt-3 flex flex-wrap gap-2">{renderActions(u)}</div>}
                     </li>
                   );

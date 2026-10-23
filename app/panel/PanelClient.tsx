@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import {
   filterUpdatesByProduct,
   type ChangelogUpdate,
@@ -11,6 +10,7 @@ import {
   type UpdateInput,
   type FieldErrors,
 } from '@/lib/changelog';
+import { Header } from '@/components/Header';
 import { MonthlyChangelog } from '@/components/MonthlyChangelog';
 import { ProductSearch } from '@/components/ProductSearch';
 import { UpdateForm } from '@/components/UpdateForm';
@@ -288,64 +288,23 @@ export function PanelClient() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 pt-6 pb-16">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#30363d] pb-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#e6edf3]">Product Updates</h1>
+    <>
+      <Header 
+        buttons={[
+          { label: 'Client View', href: '/changelog' },
+          { label: 'Log Out', href: '#', onClick: handleLogout, variant: 'danger', loading: loggingOut }
+        ]}
+      />
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+        <div className="mb-6 pb-4">
+          <h1 className="text-2xl font-bold tracking-tight text-[#2e8cff]">Product Updates</h1>
+           <p className="text-sm text-[#666]">Latest product updates, fixes, and improvements</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/changelog"
-            className="rounded-md flex justify-center items-center gap-1 border border-[#30363d] px-3 py-1 text-sm text-[#8b949e] hover:text-[#e6edf3]"
-          >
-            Client
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 512 512">
-              <rect width="512" height="512" fill="none" />
-
-
-              <path
-                d="M224 144 H160
-       A80 80 0 0 0 80 224
-       V368
-       A80 80 0 0 0 160 448
-       H288
-       A80 80 0 0 0 368 368
-       V288"
-                fill="none"
-                stroke="#B8BBDD"
-                strokeWidth="32"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-
-              <path
-                d="M272 80 H432 V240
-       M432 80 L192 320"
-                fill="none"
-                stroke="#4655FF"
-                strokeWidth="32"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-
-          </Link>
-          <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="rounded-md border border-[#f85149]/50 bg-[#f85149]/10 px-3 py-1 text-sm text-[#f85149] hover:bg-[#f85149]/20 cursor-pointer inline-flex items-center gap-1.5"
-          >
-            {loggingOut && <Spinner className="h-3.5 w-3.5" />}
-            <span>{loggingOut ? 'Logging out…' : 'Log Out'}</span>
-          </button>
-        </div>
-      </header>
 
       {errorMessage && (
         <div
           role="alert"
-          className="mb-4 rounded-md border border-[#f85149]/60 bg-[#f85149]/10 p-3 text-sm text-[#f85149]"
+          className="mb-4 rounded-md border border-[#dc2626] bg-[#dc2626]/10 p-3 text-sm text-[#dc2626]"
         >
           {errorMessage}
         </div>
@@ -354,7 +313,7 @@ export function PanelClient() {
       {/* Filter Tabs and Actions Bar */}
       <div className="mb-6 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex rounded-md border border-[#30363d] p-0.5" role="tablist">
+          <div className="flex rounded-md border border-[#2e8cff] p-0.5" role="tablist">
             {(['all', 'published', 'draft'] as const).map((t) => (
               <button
                 key={t}
@@ -362,7 +321,7 @@ export function PanelClient() {
                 aria-selected={statusFilter === t}
                 onClick={() => setStatusFilter(t)}
                 className={`cursor-pointer rounded px-3 py-1 text-sm capitalize ${
-                  statusFilter === t ? 'bg-[#30363d] font-medium text-[#e6edf3]' : 'text-[#8b949e] hover:text-[#e6edf3]'
+                  statusFilter === t ? 'bg-[#2e8cff] font-medium text-white' : 'text-[#2e8cff] hover:bg-[#2e8cff]/10'
                 }`}
               >
                 {t} ({updates.filter((u) => (t === 'all' ? true : u.status?.toLowerCase() === t)).length})
@@ -394,8 +353,8 @@ export function PanelClient() {
         <ChangelogSkeleton monthCount={2} cardsPerMonth={2} withActions={true} />
       ) : updates.length === 0 ? (
         <div className="card p-8 text-center">
-          <h2 className="text-lg font-semibold text-[#e6edf3]">No updates in database</h2>
-          <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-[#8b949e]">
+          <h2 className="text-lg font-semibold text-[#2e8cff]">No updates in database</h2>
+          <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-[#666]">
             Start by adding a product and your first changelog update.
           </p>
           <button className="btn btn-primary" onClick={startAddUpdate}>
@@ -404,8 +363,8 @@ export function PanelClient() {
         </div>
       ) : visible.length === 0 ? (
         <div className="card p-8 text-center">
-          <h2 className="text-lg font-semibold text-[#e6edf3]">No matching updates</h2>
-          <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-[#8b949e]">
+          <h2 className="text-lg font-semibold text-[#2e8cff]">No matching updates</h2>
+          <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-[#666]">
             No update matches the current filter or search criteria.
           </p>
           <button className="btn" onClick={() => { setQuery(''); setStatusFilter('all'); }}>
@@ -415,7 +374,7 @@ export function PanelClient() {
       ) : (
         <>
           {filtering && (
-            <p className="mb-3 text-sm text-[#8b949e]" role="status">
+            <p className="mb-3 text-sm text-[#666]" role="status">
               {visible.length} update{visible.length === 1 ? '' : 's'} matching “{query.trim()}”
             </p>
           )}
@@ -530,11 +489,12 @@ export function PanelClient() {
       {toast && (
         <div
           role="status"
-          className="fixed right-4 bottom-4 left-4 z-[60] rounded-md border border-[#2ea043] bg-[#0d1117] p-3 text-sm shadow-xl sm:left-auto"
+          className="fixed right-4 bottom-4 left-4 z-[60] rounded-md border border-[#2e8cff] bg-white p-3 text-sm text-[#2e8cff] shadow-xl sm:left-auto"
         >
           {toast}
         </div>
       )}
-    </main>
+      </main>
+    </>
   );
 }

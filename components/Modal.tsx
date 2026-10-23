@@ -53,7 +53,7 @@ interface ConfirmProps {
 export function ConfirmDialog({ title, confirmLabel, danger, loading = false, onConfirm, onCancel, children }: ConfirmProps) {
   return (
     <Modal title={title} onClose={onCancel}>
-      <div className="mb-5 space-y-2 text-sm text-[#c9d1d9]">{children}</div>
+      <div className="mb-3 text-sm text-[#333]">{children}</div>
       <div className="flex justify-end gap-2">
         <button className="btn" onClick={onCancel} disabled={loading}>
           Cancel
