@@ -263,7 +263,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                 : 'text-[#2e8cff] hover:bg-[#2e8cff]/10'
             }`}
           >
-            Manage Products ({localProducts.length})
+            Products ({localProducts.length})
           </button>
           <button
             role="tab"
@@ -278,7 +278,7 @@ export function ManageDialog({ products, types, onClose, onRefresh }: Props) {
                 : 'text-[#2e8cff] hover:bg-[#2e8cff]/10'
             }`}
           >
-            Manage Update Types ({localTypes.length})
+            Update Types ({localTypes.length})
           </button>
         </div>
 
