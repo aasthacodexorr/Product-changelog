@@ -20,40 +20,39 @@ export function Header({ buttons = [] }: HeaderProps) {
   return (
     <header className="w-full border-b border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-1 font-bold text-lg text-[#2e8cff]">
-              <Image 
-                src={zopLogo} 
-                alt="Zop Logo" 
-                className="h-18 w-auto"
+        <div className="relative flex h-20 items-center justify-between">
+          {/* Centered Logo */}
+          <div className="absolute left-12 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Link href="/" className="flex items-center">
+              <Image
+                src={zopLogo}
+                alt="Zop Logo"
+                width={200}
+                height={80}
+                className="h-14 w-auto object-contain"
                 priority
               />
-             
             </Link>
           </div>
 
           {/* Right Side Buttons */}
           {buttons.length > 0 && (
-            <div className="flex items-center gap-3">
-              {buttons.map((button, index) => (
+            <div className="ml-auto flex items-center gap-3">
+              {buttons.map((button, index) =>
                 button.onClick ? (
                   <button
                     key={index}
                     onClick={button.onClick}
                     disabled={button.loading}
-                    className={`
-                      group relative cursor-pointer flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium 
-                      transition-all duration-200
-                      ${button.variant === 'danger' 
-                        ? 'border border-red-500 text-red-500 hover:bg-red-500 hover:text-white' 
+                    className={`group relative flex cursor-pointer items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 ${
+                      button.variant === 'danger'
+                        ? 'border border-red-500 text-red-500 hover:bg-red-500 hover:text-white'
                         : 'border border-[#2e8cff] text-[#2e8cff] hover:bg-[#2e8cff] hover:text-white'
-                      }
-                      disabled:opacity-50 disabled:cursor-not-allowed
-                    `}
+                    }`}
                   >
-                    <span>{button.loading ? `${button.label}...` : button.label}</span>
+                    <span>
+                      {button.loading ? `${button.label}...` : button.label}
+                    </span>
                   </button>
                 ) : (
                   <Link
@@ -63,10 +62,10 @@ export function Header({ buttons = [] }: HeaderProps) {
                   >
                     <span>{button.label}</span>
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-50 transition-colors group-hover:bg-white/20">
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        width="14" 
-                        height="14" 
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
                         viewBox="0 0 512 512"
                         className="text-[#2e8cff] transition-colors group-hover:text-white"
                       >
@@ -90,7 +89,7 @@ export function Header({ buttons = [] }: HeaderProps) {
                     </span>
                   </Link>
                 )
-              ))}
+              )}
             </div>
           )}
         </div>
