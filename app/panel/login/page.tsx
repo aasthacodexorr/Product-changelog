@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/Spinner';
+import zopLogo from '@/assests/zop.png';
+import Link from 'next/link';
+import Image from 'next/image';
+
 
 export default function LoginPage() {
   const [password, setPassword] = useState('');
@@ -50,8 +54,18 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-[80vh] flex-col items-center justify-center px-4">
       <div className="card w-full max-w-md p-6 sm:p-8">
+        <div className="flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-1 font-bold text-lg text-[#2e8cff]">
+              <Image
+                src={zopLogo} 
+                alt="Zop Logo" 
+                className="h-18 w-auto"
+                priority
+              />
+            </Link>
+          </div>
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold tracking-tight text-[#e6edf3]">Employee Access</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-primary">Employee Access</h1>
           <p className="mt-2 text-sm text-[#8b949e]">
             Enter the shared password to access the changelog management panel.
           </p>
@@ -68,7 +82,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label htmlFor="panel-password" className="mb-1 block text-sm font-medium text-[#e6edf3]">
+            <label htmlFor="panel-password" className="mb-1 block text-sm font-medium">
               Shared Password
             </label>
             <input
