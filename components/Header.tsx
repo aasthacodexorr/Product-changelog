@@ -27,10 +27,10 @@ export function Header({ buttons = [] }: HeaderProps) {
               <Image 
                 src={zopLogo} 
                 alt="Zop Logo" 
-                className="h-8 w-auto"
+                className="h-18 w-auto"
                 priority
               />
-              Zop Dealer DMS
+             
             </Link>
           </div>
 
@@ -44,7 +44,7 @@ export function Header({ buttons = [] }: HeaderProps) {
                     onClick={button.onClick}
                     disabled={button.loading}
                     className={`
-                      group relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium 
+                      group relative cursor-pointer flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium 
                       transition-all duration-200
                       ${button.variant === 'danger' 
                         ? 'border border-red-500 text-red-500 hover:bg-red-500 hover:text-white' 
@@ -54,40 +54,6 @@ export function Header({ buttons = [] }: HeaderProps) {
                     `}
                   >
                     <span>{button.loading ? `${button.label}...` : button.label}</span>
-                    <span className={`flex h-6 w-6 items-center justify-center rounded-full transition-colors ${
-                      button.variant === 'danger' 
-                        ? 'bg-red-50 group-hover:bg-white/20' 
-                        : 'bg-blue-50 group-hover:bg-white/20'
-                    }`}>
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        width="14" 
-                        height="14" 
-                        viewBox="0 0 512 512"
-                        className={`transition-colors ${
-                          button.variant === 'danger' 
-                            ? 'text-red-500 group-hover:text-white' 
-                            : 'text-[#2e8cff] group-hover:text-white'
-                        }`}
-                      >
-                        <path
-                          d="M224 144 H160 A80 80 0 0 0 80 224 V368 A80 80 0 0 0 160 448 H288 A80 80 0 0 0 368 368 V288"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="32"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M272 80 H432 V240 M432 80 L192 320"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="32"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
                   </button>
                 ) : (
                   <Link
