@@ -62,6 +62,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                           <span className="font-medium text-[#333]">{u.moduleName}</span>
                         </p>
                       )}
+                      
                       <h3 className="text-[17px] font-semibold flex items-center gap-1">{u.title}
                         {reviewUrl && (
                           <a
