@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { formatDayMonth, groupByMonth, type ChangelogUpdate, type Product } from '@/lib/changelog';
-import { ChevronIcon, StatusBadge, TypeBadge } from './Badges';
+import { ChevronIcon, StatusBadge, TypeBadge, VersionBadge } from './Badges';
 
 interface Props {
   updates: ChangelogUpdate[];
@@ -53,6 +53,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                       <div className="mb-1.5 flex flex-wrap items-center gap-2 text-[13px] text-[#666]">
                         <span>{formatDayMonth(u.releaseDate)}</span>
                         <TypeBadge type={u.type} />
+                        {u.version && <VersionBadge version={u.version} />}
                         {showStatus && u.status && <StatusBadge status={u.status} />}
                       </div>
                       <h1 className="text-[19px] font-semibold">{productName}</h1>

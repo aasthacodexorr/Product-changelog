@@ -24,6 +24,17 @@ export function StatusBadge({ status }: { status: 'DRAFT' | 'PUBLISHED' }) {
   );
 }
 
+export function VersionBadge({ version }: { version: string }) {
+  const trimmed = version.trim();
+  if (!trimmed) return null;
+  const display = /^\d/.test(trimmed) ? `v${trimmed}` : trimmed;
+  return (
+    <span className="rounded-full border border-[#2e8cff] bg-[#2e8cff]/10 px-2.5 py-px text-xs font-semibold text-[#2e8cff]">
+      {display}
+    </span>
+  );
+}
+
 export function ChevronIcon({ open, className = '' }: { open: boolean; className?: string }) {
   return (
     <svg
