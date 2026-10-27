@@ -57,6 +57,11 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                         {showStatus && u.status && <StatusBadge status={u.status} />}
                       </div>
                       <h1 className="text-[19px] font-semibold">{productName}</h1>
+                      {u.moduleName?.trim() && (
+                        <p className="my-0.5 text-sm text-[#666]">
+                          <span className="font-medium text-[#333]">{u.moduleName}</span>
+                        </p>
+                      )}
                       <h3 className="text-[17px] font-semibold flex items-center gap-1">{u.title}
                         {reviewUrl && (
                           <a
