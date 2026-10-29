@@ -39,6 +39,7 @@ export function PanelClient() {
   const [managing, setManaging] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -383,6 +384,8 @@ export function PanelClient() {
             products={products}
             defaultOpen={filtering}
             showStatus={true}
+            monthStates={openMonths}
+            onMonthStateChange={setOpenMonths}
             renderActions={(u) => {
               const isActionLoading = actionLoadingId === u.id;
               return (

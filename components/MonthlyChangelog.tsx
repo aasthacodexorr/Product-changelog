@@ -13,13 +13,36 @@ interface Props {
   defaultOpen?: boolean;
   /** Whether to show draft/published status badges */
   showStatus?: boolean;
+  /** Controlled state for open months (optional, for preserving state across updates) */
+  monthStates?: Record<string, boolean>;
+  /** Callback when month state changes (optional) */
+  onMonthStateChange?: (states: Record<string, boolean>) => void;
 }
 
 /** Month-first changelog (all products together). Each month collapses independently. */
-export function MonthlyChangelog({ updates, products, renderActions, defaultOpen = false, showStatus = false }: Props) {
-  const [overrides, setOverrides] = useState<Record<string, boolean>>({});
+export function MonthlyChangelog({ 
+  updates, 
+  products, 
+  renderActions, 
+  defaultOpen = false, 
+  showStatus = false,
+  monthStates: controlledStates,
+  onMonthStateChange,
+}: Props) {
+  const [internalStates, setInternalStates] = useState<Record<string, boolean>>({});
   const names = useMemo(() => new Map(products.map((p) => [p.id, p.name])), [products]);
   const groups = useMemo(() => groupByMonth(updates), [updates]);
+  
+  // Use controlled state if provided, otherwise use internal state
+  const overrides = controlledStates ?? internalStates;
+  
+  const handleStateChange = (newStates: Record<string, boolean>) => {
+    if (onMonthStateChange) {
+      onMonthStateChange(newStates);
+    } else {
+      setInternalStates(newStates);
+    }
+  };
 
   return (
     <div>
@@ -33,7 +56,7 @@ export function MonthlyChangelog({ updates, products, renderActions, defaultOpen
                 type="button"
                 aria-expanded={open}
                 aria-controls={panelId}
-                onClick={() => setOverrides((s) => ({ ...s, [g.key]: !open }))}
+                onClick={() => handleStateChange({ ...overrides, [g.key]: !open })}
                 className="flex w-full cursor-pointer items-center gap-2 border-b border-[#2e8cff] py-2 text-left text-xl font-semibold hover:text-[#2e8cff]"
               >
                 <ChevronIcon open={open} />
