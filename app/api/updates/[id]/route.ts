@@ -136,7 +136,7 @@ export async function PUT(req: NextRequest, context: RouteContext) {
       where: { id },
       data: {
         ...(productId && { productId }),
-        ...(moduleName && { moduleName }),
+        ...('moduleName' in (body || {}) && { moduleName: moduleName ?? '' }),
         ...(title && { title }),
         ...(description && { description }),
         ...(releaseDateTime && { releaseDate: releaseDateTime }),
