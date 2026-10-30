@@ -15,7 +15,7 @@ export async function GET() {
       },
     });
 
-    const formatted = products.map((p) => ({
+    const formatted = products.map((p: typeof products[number]) => ({
       id: p.id,
       name: p.name,
       createdAt: p.createdAt.toISOString(),
@@ -56,13 +56,10 @@ export async function POST(req: NextRequest) {
 
     const { name } = parsed.data;
 
-    // Check for case-insensitive duplicate name
+    // Check for duplicate name
     const existing = await prisma.product.findFirst({
       where: {
-        name: {
-          equals: name,
-          mode: 'insensitive',
-        },
+        name: name,
       },
     });
 

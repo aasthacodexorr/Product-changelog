@@ -15,7 +15,7 @@ export async function GET() {
       },
     });
 
-    const formatted = types.map((t) => ({
+    const formatted = types.map((t: typeof types[number]) => ({
       id: t.id,
       name: t.name,
       normalizedName: t.normalizedName,

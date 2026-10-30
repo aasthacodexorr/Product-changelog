@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { verifySessionToken, SESSION_COOKIE_NAME, authenticateEmployee } from '@/lib/auth/session';
 import { createUpdateSchema, processReviewUrl } from '@/lib/validation/schemas';
-import { Prisma } from '@prisma/client';
 
 export function formatUpdateResponse(u: {
   id: string;
@@ -51,7 +50,7 @@ export async function GET(req: NextRequest) {
     const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
     const isEmployee = await verifySessionToken(token);
 
-    const where: Prisma.UpdateWhereInput = {};
+    const where: any = {};
 
     if (!isEmployee) {
       // Force PUBLISHED status for public requests regardless of query params
@@ -79,17 +78,17 @@ export async function GET(req: NextRequest) {
     // Filter by moduleName
     const moduleName = searchParams.get('moduleName');
     if (moduleName) {
-      where.moduleName = { contains: moduleName, mode: 'insensitive' };
+      where.moduleName = { contains: moduleName };
     }
 
     // Filter by search query (across product name, module, title, description)
     const search = searchParams.get('search')?.trim();
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { moduleName: { contains: search, mode: 'insensitive' } },
-        { product: { name: { contains: search, mode: 'insensitive' } } },
+        { title: { contains: search } },
+        { description: { contains: search } },
+        { moduleName: { contains: search } },
+        { product: { name: { contains: search } } },
       ];
     }
 
@@ -116,7 +115,7 @@ export async function GET(req: NextRequest) {
 
     // Sorting: default newest release dates first, with latest created on top
     const sort = searchParams.get('sort')?.toLowerCase();
-    const orderBy: Prisma.UpdateOrderByWithRelationInput[] =
+    const orderBy: any =
       sort === 'oldest'
         ? [{ releaseDate: 'asc' }, { createdAt: 'asc' }]
         : [{ releaseDate: 'desc' }, { createdAt: 'desc' }];
