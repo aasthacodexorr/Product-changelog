@@ -11,3 +11,6 @@ next-env.d.ts
 
 /lib/generated/prisma
 .neon
+*.db
+*.db-journal
+prisma/prisma
