@@ -4,12 +4,15 @@ import { useState, useEffect, useMemo } from 'react';
 import { Header } from '@/components/Header';
 import { MonthlyChangelog } from '@/components/MonthlyChangelog';
 import { ProductSearch } from '@/components/ProductSearch';
+import { ProductTypeFilter } from '@/components/ProductTypeFilter';
 import { ChangelogSkeleton } from '@/components/ChangelogSkeleton';
-import { filterUpdatesByProduct, type ChangelogUpdate, type Product } from '@/lib/changelog';
+import { filterUpdates, type ChangelogUpdate, type Product } from '@/lib/changelog';
 
 export default function PublicChangelogPage() {
   const [updates, setUpdates] = useState<ChangelogUpdate[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,9 +21,10 @@ export default function PublicChangelogPage() {
     try {
       setLoading(true);
       setError(null);
-      const [updatesRes, productsRes] = await Promise.all([
+      const [updatesRes, productsRes, typesRes] = await Promise.all([
         fetch('/api/updates', { cache: 'no-store' }),
         fetch('/api/products', { cache: 'no-store' }),
+        fetch('/api/update-types', { cache: 'no-store' }),
       ]);
 
       if (!updatesRes.ok || !productsRes.ok) {
@@ -29,9 +33,20 @@ export default function PublicChangelogPage() {
 
       const updatesData = await updatesRes.json();
       const productsData = await productsRes.json();
+      const loadedUpdates: ChangelogUpdate[] = updatesData.updates || [];
 
-      setUpdates(updatesData.updates || []);
+      setUpdates(loadedUpdates);
       setProducts(productsData.products || []);
+
+      // Extract types from API and updates
+      let typeNames: string[] = [];
+      if (typesRes.ok) {
+        const typesData = await typesRes.json();
+        typeNames = (typesData.updateTypes || []).map((t: { name: string }) => t.name);
+      }
+      const updateTypes = loadedUpdates.map((u) => u.type).filter(Boolean);
+      const combined = Array.from(new Set([...typeNames, ...updateTypes]));
+      setAvailableTypes(combined);
     } catch (err) {
       console.error(err);
       setError('Unable to load latest changelog updates. Please refresh.');
@@ -44,11 +59,26 @@ export default function PublicChangelogPage() {
     fetchData();
   }, []);
 
-  const filtering = query.trim() !== '';
+  const typeCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const u of updates) {
+      if (u.type) {
+        counts[u.type] = (counts[u.type] || 0) + 1;
+      }
+    }
+    return counts;
+  }, [updates]);
+
+  const filtering = query.trim() !== '' || selectedTypes.length > 0;
   const visible = useMemo(
-    () => filterUpdatesByProduct(updates, products, query),
-    [updates, products, query]
+    () => filterUpdates(updates, products, query, selectedTypes),
+    [updates, products, query, selectedTypes]
   );
+
+  const clearAllFilters = () => {
+    setQuery('');
+    setSelectedTypes([]);
+  };
 
   return (
     <>
@@ -73,8 +103,20 @@ export default function PublicChangelogPage() {
         )}
 
         {products.length > 0 && (
-          <div className="mb-6">
+          <div className="mb-4">
             <ProductSearch value={query} onChange={setQuery} products={products} />
+          </div>
+        )}
+
+        {/* Product Type Filter Pills */}
+        {!loading && availableTypes.length > 0 && (
+          <div className="mb-6">
+            <ProductTypeFilter
+              types={availableTypes}
+              selectedTypes={selectedTypes}
+              onChange={setSelectedTypes}
+              counts={typeCounts}
+            />
           </div>
         )}
 
@@ -91,17 +133,24 @@ export default function PublicChangelogPage() {
           <div className="card p-8 text-center">
             <h2 className="text-lg font-semibold text-[#2e8cff]">No matching updates</h2>
             <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-[#666]">
-              No product name contains “{query.trim()}”, or matching products have no updates.
+              {query.trim() && selectedTypes.length > 0
+                ? `No updates match product “${query.trim()}” with selected type(s): ${selectedTypes.join(', ')}.`
+                : query.trim()
+                ? `No product name contains “${query.trim()}”, or matching products have no updates.`
+                : `No updates match selected type(s): ${selectedTypes.join(', ')}.`}
             </p>
-            <button className="btn" onClick={() => setQuery('')}>
-              Clear search
+            <button className="btn" onClick={clearAllFilters}>
+              Clear all filters
             </button>
           </div>
         ) : (
           <>
             {filtering && (
               <p className="mb-3 text-sm text-[#666]" role="status">
-                {visible.length} update{visible.length === 1 ? '' : 's'} matching “{query.trim()}”
+                {visible.length} update{visible.length === 1 ? '' : 's'} matching
+                {query.trim() ? ` “${query.trim()}”` : ''}
+                {query.trim() && selectedTypes.length > 0 ? ' and ' : ' '}
+                {selectedTypes.length > 0 ? `type(s): ${selectedTypes.join(', ')}` : ''}
               </p>
             )}
             <MonthlyChangelog
