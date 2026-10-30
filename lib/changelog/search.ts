@@ -29,6 +29,16 @@ export function filterUpdates(
   return result;
 }
 
+/** Filter updates by selected product IDs. */
+export function filterUpdatesByProducts(
+  updates: ChangelogUpdate[],
+  selectedProductIds: string[],
+): ChangelogUpdate[] {
+  if (selectedProductIds.length === 0) return updates;
+  const selectedSet = new Set(selectedProductIds);
+  return updates.filter((u) => selectedSet.has(u.productId));
+}
+
 /** Product names matching the query, prefix matches first. */
 export function suggestProducts(products: Product[], query: string, limit = 6): Product[] {
   const q = norm(query);

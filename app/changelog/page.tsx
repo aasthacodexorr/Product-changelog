@@ -4,14 +4,16 @@ import { useState, useEffect, useMemo } from 'react';
 import { Header } from '@/components/Header';
 import { MonthlyChangelog } from '@/components/MonthlyChangelog';
 import { ProductSearch } from '@/components/ProductSearch';
+import { ProductFilter } from '@/components/ProductFilter';
 import { ProductTypeFilter } from '@/components/ProductTypeFilter';
 import { ChangelogSkeleton } from '@/components/ChangelogSkeleton';
-import { filterUpdates, type ChangelogUpdate, type Product } from '@/lib/changelog';
+import { filterUpdates, filterUpdatesByProducts, type ChangelogUpdate, type Product } from '@/lib/changelog';
 
 export default function PublicChangelogPage() {
   const [updates, setUpdates] = useState<ChangelogUpdate[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [availableTypes, setAvailableTypes] = useState<string[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
@@ -69,14 +71,27 @@ export default function PublicChangelogPage() {
     return counts;
   }, [updates]);
 
-  const filtering = query.trim() !== '' || selectedTypes.length > 0;
-  const visible = useMemo(
-    () => filterUpdates(updates, products, query, selectedTypes),
-    [updates, products, query, selectedTypes]
-  );
+  const productCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const u of updates) {
+      counts[u.productId] = (counts[u.productId] || 0) + 1;
+    }
+    return counts;
+  }, [updates]);
+
+  const filtering = query.trim() !== '' || selectedProducts.length > 0 || selectedTypes.length > 0;
+  const visible = useMemo(() => {
+    let result = filterUpdates(updates, products, query, selectedTypes);
+    if (selectedProducts.length > 0) {
+      const selectedSet = new Set(selectedProducts);
+      result = result.filter((u) => selectedSet.has(u.productId));
+    }
+    return result;
+  }, [updates, products, query, selectedTypes, selectedProducts]);
 
   const clearAllFilters = () => {
     setQuery('');
+    setSelectedProducts([]);
     setSelectedTypes([]);
   };
 
@@ -108,15 +123,33 @@ export default function PublicChangelogPage() {
           </div>
         )}
 
-        {/* Product Type Filter Pills */}
+        {/* Product Filter Pills */}
+        {!loading && products.length > 0 && (
+          <div className="mb-4">
+            <div className="mb-2">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Filter by Product</p>
+              <ProductFilter
+                products={products}
+                selectedProducts={selectedProducts}
+                onChange={setSelectedProducts}
+                counts={productCounts}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Update Type Filter Pills */}
         {!loading && availableTypes.length > 0 && (
           <div className="mb-6">
-            <ProductTypeFilter
-              types={availableTypes}
-              selectedTypes={selectedTypes}
-              onChange={setSelectedTypes}
-              counts={typeCounts}
-            />
+            <div className="mb-2">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Filter by Update Type</p>
+              <ProductTypeFilter
+                types={availableTypes}
+                selectedTypes={selectedTypes}
+                onChange={setSelectedTypes}
+                counts={typeCounts}
+              />
+            </div>
           </div>
         )}
 
@@ -133,11 +166,21 @@ export default function PublicChangelogPage() {
           <div className="card p-8 text-center">
             <h2 className="text-lg font-semibold text-[#2e8cff]">No matching updates</h2>
             <p className="mx-auto mt-1 mb-4 max-w-md text-sm text-[#666]">
-              {query.trim() && selectedTypes.length > 0
-                ? `No updates match product “${query.trim()}” with selected type(s): ${selectedTypes.join(', ')}.`
+              {query.trim() && selectedProducts.length > 0 && selectedTypes.length > 0
+                ? `No updates match product "${query.trim()}" with selected product(s) and type(s).`
+                : query.trim() && selectedProducts.length > 0
+                ? `No updates match product "${query.trim()}" with selected product(s).`
+                : query.trim() && selectedTypes.length > 0
+                ? `No updates match product "${query.trim()}" with selected type(s).`
                 : query.trim()
-                ? `No product name contains “${query.trim()}”, or matching products have no updates.`
-                : `No updates match selected type(s): ${selectedTypes.join(', ')}.`}
+                ? `No product name contains "${query.trim()}".`
+                : selectedProducts.length > 0 && selectedTypes.length > 0
+                ? `No updates match selected product(s) and type(s).`
+                : selectedProducts.length > 0
+                ? `No updates for selected product(s).`
+                : selectedTypes.length > 0
+                ? `No updates match selected type(s).`
+                : 'No updates available.'}
             </p>
             <button className="btn" onClick={clearAllFilters}>
               Clear all filters
@@ -148,8 +191,9 @@ export default function PublicChangelogPage() {
             {filtering && (
               <p className="mb-3 text-sm text-[#666]" role="status">
                 {visible.length} update{visible.length === 1 ? '' : 's'} matching
-                {query.trim() ? ` “${query.trim()}”` : ''}
-                {query.trim() && selectedTypes.length > 0 ? ' and ' : ' '}
+                {query.trim() ? ` product "${query.trim()}"` : ''}
+                {selectedProducts.length > 0 ? ` product(s)` : ''}
+                {(query.trim() || selectedProducts.length > 0) && selectedTypes.length > 0 ? ' with ' : ''}
                 {selectedTypes.length > 0 ? `type(s): ${selectedTypes.join(', ')}` : ''}
               </p>
             )}
