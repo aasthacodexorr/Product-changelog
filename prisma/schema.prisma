@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL_UNPOOLED")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 enum UpdateStatus {
@@ -14,7 +13,7 @@ enum UpdateStatus {
 }
 
 model Product {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -24,7 +23,7 @@ model Product {
 }
 
 model UpdateType {
-  id             String   @id @default(uuid())
+  id             String   @id @default(cuid())
   name           String
   normalizedName String   @unique
   isDefault      Boolean  @default(false)
@@ -36,12 +35,12 @@ model UpdateType {
 }
 
 model Update {
-  id          String       @id @default(uuid())
+  id          String       @id @default(cuid())
   productId   String       @map("product_id")
   moduleName  String       @map("module_name")
   title       String
-  description String       @db.Text
-  releaseDate DateTime     @map("release_date") @db.Date
+  description String
+  releaseDate DateTime     @map("release_date")
   typeId      String       @map("type_id")
   version     String?
   reviewUrl   String?      @map("review_url")
@@ -60,7 +59,7 @@ model Update {
 }
 
 model Session {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   tokenHash String   @unique @map("token_hash")
   expiresAt DateTime @map("expires_at")
   createdAt DateTime @default(now()) @map("created_at")
@@ -70,7 +69,7 @@ model Session {
 }
 
 model LoginAttempt {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   ipKey       String    @unique @map("ip_key")
   attempts    Int       @default(0)
   lockedUntil DateTime? @map("locked_until")
